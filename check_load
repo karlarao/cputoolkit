@@ -1,0 +1,2 @@
+while :; do cat ash_detail.txt | grep -A3 -i cpu_total; echo "---"; sleep 10; done
+

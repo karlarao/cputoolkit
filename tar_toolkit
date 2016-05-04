@@ -1,0 +1,1 @@
+tar -cjvpf cputoolkit.tar.bz2 READ* tar_toolkit aas* ash_workload aveactn* ash_detail* gas* kill* loadprof* sql_detail* clean cputoolkit runcputoolkit-* orion_* saturate die* turbostat instrument cage_check.sh aix cpu_topology snapper* sn.sql test-auto disable_rm.sql check_load

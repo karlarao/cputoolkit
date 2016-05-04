@@ -1,0 +1,46 @@
+# run this command as oracle
+# example: 
+#   ./cputoolkit <start CPU> <interval> <end CPU> <inst name>
+#   ./cputoolkit 1 1 16 dw
+# 
+
+
+for i in $(seq $1 $2 $3)
+        do
+                echo "run for $i CPU/s"
+                echo "welcome1" | sudo -S ./turbostat 2> turbostat.txt &
+                collectl -scC --verbose -o T -o D >> collectl-cpuverbose.txt 2> /dev/null &
+                vmstat 2 100000000 | while read line; do echo "`date +%T`" "$line" ; done  >> vmstat.txt &
+                mpstat -P ALL 2 100000000 | while read line; do echo "`date +%T`" "$line" ; done  >> mpstat.txt &
+                ./saturate $i $4
+                ./sql_detail &
+                ./loadprof &
+                ./gas &
+                ./ash_detail &
+                ./ash_workload &
+                #./snapper &
+                sleep 600
+                ./kill_sessions.sh
+                kill -9 `ps -ef | grep -i "./sql_detail" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./loadprof" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./gas" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./ash_detail" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./ash_workload" | grep -v grep | awk '{print $2}'`
+                #kill -9 `ps -ef | grep -i "./snapper" | grep -v grep | awk '{print $2}'`
+                fuser -k vmstat.txt
+                fuser -k mpstat.txt
+                fuser -k collectl-cpuverbose.txt
+                echo "welcome1" | sudo -S kill -9 `ps -ef | grep -i "./turbostat" | grep -v grep | grep -v sudo | awk '{print $2}'`
+                mv sql_detail.txt $i-sess-sql_detail.txt
+                mv loadprof.txt $i-sess-loadprof.txt
+                mv gas.txt $i-sess-gas.txt
+                mv ash_detail.txt $i-sess-ash_detail.txt
+                mv ash_workload.txt $i-sess-ash_workload.txt
+                mv vmstat.txt $i-sess-vmstat.txt 
+                mv mpstat.txt $i-sess-mpstat.txt
+                mv collectl-cpuverbose.txt $i-sess-collectl-cpuverbose.txt
+                mv turbostat.txt $i-sess-turbostat.txt
+                #mv snapper.txt $i-sess-snapper.txt
+        done      
+        
+        

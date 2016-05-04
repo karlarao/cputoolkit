@@ -1,0 +1,39 @@
+# saturate specific number of CPUs
+# usage:
+#   ./runcputoolkit-single <num CPUs> <db name>
+#   ./runcputoolkit-single 4 dw
+
+#echo "welcome1" | sudo -S ./turbostat 2> turbostat.txt &
+#collectl -scC --verbose -o T -o D >> collectl-cpuverbose.txt 2> /dev/null &
+lparstat 1 1000000000 >> lparstat.txt 2> /dev/null &
+vmstat 1 1000000000 >> vmstat.txt 2> /dev/null &
+mpstat 1 1000000000 >> mpstat.txt 2> /dev/null &
+./saturate $1 $2
+./sql_detail &
+./loadprof &
+./gas &
+./ash_detail &
+./ash_workload &
+sleep 600 
+./kill_sessions.sh
+kill -9 `ps -ef | grep -i "./sql_detail" | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep -i "./loadprof" | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep -i "./gas" | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep -i "./ash_detail" | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep -i "./ash_workload" | grep -v grep | awk '{print $2}'`
+#fuser -k collectl-cpuverbose.txt
+#echo "welcome1" | sudo -S kill -9 `ps -ef | grep -i "./turbostat" | grep -v grep | grep -v sudo | awk '{print $2}'`
+fuser -k lparstat.txt
+fuser -k vmstat.txt 
+fuser -k mpstat.txt
+mv sql_detail.txt $1-sess-sql_detail.txt
+mv loadprof.txt $1-sess-loadprof.txt
+mv gas.txt $1-sess-gas.txt
+mv ash_detail.txt $1-sess-ash_detail.txt
+mv ash_workload.txt $1-sess-ash_workload.txt
+mv collectl-cpuverbose.txt $1-sess-collectl-cpuverbose.txt
+mv turbostat.txt $1-sess-turbostat.txt
+mv lparstat.txt $1-sess-lparstat.txt
+mv vmstat.txt $1-sess-vmstat.txt
+mv mpstat.txt $1-sess-mpstat.txt
+

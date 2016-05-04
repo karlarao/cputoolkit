@@ -1,0 +1,6 @@
+# run this command as oracle
+# example: 
+#   ./runcputoolkit-auto <start CPU> <interval> <end CPU> <inst name>
+#   ./runcputoolkit-auto 1 1 16 dw
+
+sh cputoolkit $1 $2 $3 $4 &

@@ -1,0 +1,10 @@
+# purpose: pass the # of SELECT count(*) to execute on each database
+# usage: sh saturate 4 dbm1 2 exadb1
+
+sh orion_3_ftsallmulti.sh $1 $2 &
+sh orion_3_ftsallmulti.sh $3 $4 &
+sh orion_3_ftsallmulti.sh $5 $6 &
+sh orion_3_ftsallmulti.sh $7 $8 &
+sh orion_3_ftsallmulti.sh $9 $10 &
+sh orion_3_ftsallmulti.sh $11 $12 &
+

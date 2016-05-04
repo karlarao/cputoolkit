@@ -1,0 +1,9 @@
+#!/bin/bash
+
+while :; do
+sqlplus "/ as sysdba" <<! &
+@loadprof.sql
+!
+sleep 2
+echo
+done

@@ -1,0 +1,46 @@
+# run this command as oracle
+# example: 
+#   ./cputoolkit <start CPU> <end CPU> <db name>
+#   ./cputoolkit 1 33 dw
+# 
+
+
+for i in 1 5 9 13 17 
+        do
+                echo "run for $i CPU/s"
+                #echo "welcome1" | sudo -S ./turbostat 2> turbostat.txt &
+                #collectl -scC --verbose -o T -o D >> collectl-cpuverbose.txt 2> /dev/null &
+                lparstat 1 1000000000 >> lparstat.txt 2> /dev/null &
+                vmstat 1 1000000000 >> vmstat.txt 2> /dev/null &
+                mpstat 1 1000000000 >> mpstat.txt 2> /dev/null &
+                ./saturate $i $3
+                ./sql_detail &
+                ./loadprof &
+                ./gas &
+                ./ash_detail &
+                ./ash_workload &
+                sleep 600 
+                ./kill_sessions.sh
+                kill -9 `ps -ef | grep -i "./sql_detail" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./loadprof" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./gas" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./ash_detail" | grep -v grep | awk '{print $2}'`
+                kill -9 `ps -ef | grep -i "./ash_workload" | grep -v grep | awk '{print $2}'`
+                #fuser -k collectl-cpuverbose.txt
+                #echo "welcome1" | sudo -S kill -9 `ps -ef | grep -i "./turbostat" | grep -v grep | grep -v sudo | awk '{print $2}'`
+                fuser -k lparstat.txt
+                fuser -k vmstat.txt 
+                fuser -k mpstat.txt
+                mv sql_detail.txt $i-sess-sql_detail.txt
+                mv loadprof.txt $i-sess-loadprof.txt
+                mv gas.txt $i-sess-gas.txt
+                mv ash_detail.txt $i-sess-ash_detail.txt
+                mv ash_workload.txt $i-sess-ash_workload.txt
+                mv collectl-cpuverbose.txt $i-sess-collectl-cpuverbose.txt
+                mv turbostat.txt $i-sess-turbostat.txt
+                mv lparstat.txt $i-sess-lparstat.txt
+                mv vmstat.txt $i-sess-vmstat.txt
+                mv mpstat.txt $i-sess-mpstat.txt
+        done
+        
+        

@@ -1,0 +1,16 @@
+# just run the instrumentation scripts 
+# usage:
+#   ./instrument
+
+echo "welcome1" | sudo -S ./turbostat 2> turbostat.txt &
+collectl -scC --verbose -o T -o D >> collectl-cpuverbose.txt 2> /dev/null &
+vmstat 2 100000000 | while read line; do echo "`date +%T`" "$line" ; done  >> vmstat.txt &
+mpstat -P ALL 2 100000000 | while read line; do echo "`date +%T`" "$line" ; done  >> mpstat.txt &
+./sql_detail &
+./loadprof &
+./gas &
+./ash_detail &
+./ash_workload &               
+./snapper &
+
+
